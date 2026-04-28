@@ -1,51 +1,41 @@
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TRAINMANAGEMENTAPP {
 
-    // Inner Bogie class
-    static class Bogie {
-        String name;
-        int capacity;
-
-        Bogie(String name, int capacity) {
-            this.name = name;
-            this.capacity = capacity;
-        }
-    }
-
     public static void main(String[] args) {
 
-        System.out.println("=========================================");
-        System.out.println(" UC7 - Sort Bogies by Capacity (Comparator) ");
-        System.out.println("=========================================\n");
+        System.out.println("====================================");
+        System.out.println("UC4 - Maintain Ordered Bogie Consist");
+        System.out.println("====================================\n");
 
-        // Create list of bogies
-        List<Bogie> bogies = new ArrayList<>();
+        // Create a LinkedList
+        List<String> trainConsist = new LinkedList<>();
 
-        bogies.add(new Bogie("Sleeper", 72));
-        bogies.add(new Bogie("AC Chair", 56));
-        bogies.add(new Bogie("First Class", 24));
-        bogies.add(new Bogie("General", 90));
+        // Add initial bogies
+        trainConsist.add("Engine");
+        trainConsist.add("Sleeper");
+        trainConsist.add("AC");
+        trainConsist.add("Cargo");
+        trainConsist.add("Guard");
 
-        // Before sorting
-        System.out.println("Before Sorting:");
-        for (Bogie b : bogies) {
-            System.out.println(b.name + " -> " + b.capacity);
-        }
+        // Display initial train consist
+        System.out.println("Initial Train Consist:");
+        System.out.println(trainConsist + "\n");
 
-        // Sort using Comparator (ascending order)
-        Collections.sort(bogies, new Comparator<Bogie>() {
-            public int compare(Bogie b1, Bogie b2) {
-                return b1.capacity - b2.capacity;
-            }
-        });
+        // Insert "Pantry Car" at position 2 (index 2)
+        trainConsist.add(2, "Pantry Car");
 
-        // After sorting
-        System.out.println("\nAfter Sorting by Capacity:");
-        for (Bogie b : bogies) {
-            System.out.println(b.name + " -> " + b.capacity);
-        }
+        System.out.println("After Inserting 'Pantry Car' at position 2:");
+        System.out.println(trainConsist + "\n");
 
-        System.out.println("\nUC7 sorting completed...");
+        // Remove first and last bogie
+        trainConsist.remove(0); // remove Engine
+        trainConsist.remove(trainConsist.size() - 1); // remove Guard
+
+        System.out.println("After Removing First and Last Bogie:");
+        System.out.println(trainConsist + "\n");
+
+        System.out.println("UC4 ordered consist operations completed...");
     }
 }

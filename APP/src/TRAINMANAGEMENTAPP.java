@@ -1,9 +1,9 @@
 import java.util.*;
-import java.util.stream.*;
+import java.util.stream.Collectors;
 
 public class TRAINMANAGEMENTAPP {
 
-    // Bogie class
+    // ================= MODEL CLASS =================
     static class Bogie {
         String name;
         int capacity;
@@ -14,89 +14,171 @@ public class TRAINMANAGEMENTAPP {
         }
     }
 
-    // 🔹 Filter method (used in both main + test)
-    static List<Bogie> filterBogies(List<Bogie> bogies, int threshold) {
+    // ================= GROUPING METHOD =================
+    public static Map<String, List<Bogie>> groupBogies(List<Bogie> bogies) {
         return bogies.stream()
-                .filter(b -> b.capacity > threshold)
-                .collect(Collectors.toList());
+                .collect(Collectors.groupingBy(b -> b.name));
     }
 
+    // ================= MAIN METHOD =================
     public static void main(String[] args) {
 
-        System.out.println("=======================================");
-        System.out.println("UC8 - Filter Passenger Bogies Using Streams");
-        System.out.println("=======================================\n");
+        System.out.println("==========================================");
+        System.out.println("UC9 - Group Bogies by Type");
+        System.out.println("==========================================\n");
 
-        // Create list
         List<Bogie> bogies = new ArrayList<>();
+
         bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("AC Chair", 56));
         bogies.add(new Bogie("First Class", 24));
-        bogies.add(new Bogie("General", 90));
+        bogies.add(new Bogie("Sleeper", 70));
+        bogies.add(new Bogie("AC Chair", 60));
 
-        // Display all
         System.out.println("All Bogies:");
         for (Bogie b : bogies) {
             System.out.println(b.name + " -> " + b.capacity);
         }
 
-        // Filter
-        List<Bogie> filtered = filterBogies(bogies, 60);
+        Map<String, List<Bogie>> groupedBogies = groupBogies(bogies);
 
-        // Display filtered
-        System.out.println("\nFiltered Bogies (Capacity > 60):");
-        for (Bogie b : filtered) {
-            System.out.println(b.name + " -> " + b.capacity);
+        System.out.println("\nGrouped Bogies:");
+
+        for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()) {
+            System.out.println("\nBogie Type: " + entry.getKey());
+
+            for (Bogie b : entry.getValue()) {
+                System.out.println("Capacity -> " + b.capacity);
+            }
         }
 
-        System.out.println("\nUC8 filtering completed...\n");
+        System.out.println("\nUC9 grouping completed...");
 
-        // 🔥 RUN TEST CASES
-        runTests();
+        System.out.println("\n==========================================");
+        System.out.println("TEST CASE RESULTS");
+        System.out.println("==========================================");
+
+        testGrouping_BogiesGroupedByType();
+        testGrouping_MultipleBogiesInSameGroup();
+        testGrouping_DifferentBogieTypes();
+        testGrouping_EmptyBogieList();
+        testGrouping_SingleBogieCategory();
+        testGrouping_MapContainsCorrectKeys();
+        testGrouping_GroupSizeValidation();
+        testGrouping_OriginalListUnchanged();
+
+        System.out.println("\nAll test cases executed successfully.");
     }
 
-    // 🔥 TEST CASES (without JUnit)
-    static void runTests() {
-        System.out.println("===== RUNNING TEST CASES =====");
+    // ================= SIMPLE ASSERT METHOD =================
+    static void check(boolean condition, String testName) {
+        if (condition) {
+            System.out.println(testName + " : PASSED");
+        } else {
+            System.out.println(testName + " : FAILED");
+        }
+    }
 
-        // 1. Greater than
-        List<Bogie> t1 = Arrays.asList(new Bogie("A", 70), new Bogie("B", 50));
-        System.out.println("Test 1: " + (filterBogies(t1, 60).size() == 1));
+    // ================= TEST CASES =================
 
-        // 2. Equal
-        List<Bogie> t2 = Arrays.asList(new Bogie("A", 60));
-        System.out.println("Test 2: " + (filterBogies(t2, 60).size() == 0));
-
-        // 3. Less than
-        List<Bogie> t3 = Arrays.asList(new Bogie("A", 40));
-        System.out.println("Test 3: " + (filterBogies(t3, 60).isEmpty()));
-
-        // 4. Multiple match
-        List<Bogie> t4 = Arrays.asList(
-                new Bogie("A", 70),
-                new Bogie("B", 80),
-                new Bogie("C", 50)
+    static void testGrouping_BogiesGroupedByType() {
+        List<Bogie> bogies = Arrays.asList(
+                new Bogie("Sleeper", 72),
+                new Bogie("Sleeper", 70)
         );
-        System.out.println("Test 4: " + (filterBogies(t4, 60).size() == 2));
 
-        // 5. No match
-        List<Bogie> t5 = Arrays.asList(new Bogie("A", 30), new Bogie("B", 40));
-        System.out.println("Test 5: " + (filterBogies(t5, 60).isEmpty()));
+        Map<String, List<Bogie>> result = groupBogies(bogies);
 
-        // 6. All match
-        List<Bogie> t6 = Arrays.asList(new Bogie("A", 70), new Bogie("B", 80));
-        System.out.println("Test 6: " + (filterBogies(t6, 60).size() == 2));
+        check(result.containsKey("Sleeper") &&
+                        result.get("Sleeper").size() == 2,
+                "testGrouping_BogiesGroupedByType()");
+    }
 
-        // 7. Empty list
-        List<Bogie> t7 = new ArrayList<>();
-        System.out.println("Test 7: " + (filterBogies(t7, 60).isEmpty()));
+    static void testGrouping_MultipleBogiesInSameGroup() {
+        List<Bogie> bogies = Arrays.asList(
+                new Bogie("AC Chair", 56),
+                new Bogie("AC Chair", 60)
+        );
 
-        // 8. Original unchanged
-        List<Bogie> t8 = new ArrayList<>();
-        t8.add(new Bogie("A", 70));
-        filterBogies(t8, 60);
-        System.out.println("Test 8: " + (t8.size() == 1));
+        Map<String, List<Bogie>> result = groupBogies(bogies);
 
-        System.out.println("===== ALL TESTS DONE =====");
+        check(result.get("AC Chair").size() == 2,
+                "testGrouping_MultipleBogiesInSameGroup()");
+    }
+
+    static void testGrouping_DifferentBogieTypes() {
+        List<Bogie> bogies = Arrays.asList(
+                new Bogie("Sleeper", 72),
+                new Bogie("AC Chair", 56),
+                new Bogie("First Class", 24)
+        );
+
+        Map<String, List<Bogie>> result = groupBogies(bogies);
+
+        check(result.size() == 3,
+                "testGrouping_DifferentBogieTypes()");
+    }
+
+    static void testGrouping_EmptyBogieList() {
+        List<Bogie> bogies = new ArrayList<>();
+
+        Map<String, List<Bogie>> result = groupBogies(bogies);
+
+        check(result.isEmpty(),
+                "testGrouping_EmptyBogieList()");
+    }
+
+    static void testGrouping_SingleBogieCategory() {
+        List<Bogie> bogies = Arrays.asList(
+                new Bogie("First Class", 24)
+        );
+
+        Map<String, List<Bogie>> result = groupBogies(bogies);
+
+        check(result.size() == 1 &&
+                        result.containsKey("First Class"),
+                "testGrouping_SingleBogieCategory()");
+    }
+
+    static void testGrouping_MapContainsCorrectKeys() {
+        List<Bogie> bogies = Arrays.asList(
+                new Bogie("Sleeper", 72),
+                new Bogie("AC Chair", 56),
+                new Bogie("First Class", 24)
+        );
+
+        Map<String, List<Bogie>> result = groupBogies(bogies);
+
+        check(result.containsKey("Sleeper") &&
+                        result.containsKey("AC Chair") &&
+                        result.containsKey("First Class"),
+                "testGrouping_MapContainsCorrectKeys()");
+    }
+
+    static void testGrouping_GroupSizeValidation() {
+        List<Bogie> bogies = Arrays.asList(
+                new Bogie("Sleeper", 72),
+                new Bogie("Sleeper", 70),
+                new Bogie("AC Chair", 56)
+        );
+
+        Map<String, List<Bogie>> result = groupBogies(bogies);
+
+        check(result.get("Sleeper").size() == 2 &&
+                        result.get("AC Chair").size() == 1,
+                "testGrouping_GroupSizeValidation()");
+    }
+
+    static void testGrouping_OriginalListUnchanged() {
+        List<Bogie> bogies = new ArrayList<>();
+        bogies.add(new Bogie("Sleeper", 72));
+        bogies.add(new Bogie("AC Chair", 56));
+
+        int originalSize = bogies.size();
+
+        groupBogies(bogies);
+
+        check(bogies.size() == originalSize,
+                "testGrouping_OriginalListUnchanged()");
     }
 }
